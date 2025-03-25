@@ -1,6 +1,4 @@
-**About**
 
-This project was developed as part of an individual study assignment for the WebAdvanced course at Saxion University of Applied Sciences.
 
 **ArtBidder – painting auction web application**
 
