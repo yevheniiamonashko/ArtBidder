@@ -1,0 +1,620 @@
+
+
+
+###  TC1: (Good weather) Tests if list of paintings is returned correclty
+GET {{host}}:{{port}}/paintings
+
+> {%
+    client.test(
+        "Paintings retrieval is successfully",
+        function() {
+            client.assert(response.status === 200, "Response status is not 200");
+            client.assert(response.body.paintings.length > 0, "Paintings list is empty");
+        }
+    );
+%}
+
+
+
+### TC2: (Good weather) Tests if correct paintings filtered by existing author is returned
+
+GET {{host}}:{{port}}/paintings?artist=Van%20Gogh
+
+> {%
+    client.test("Paintings retrieval for Van Gogh is successful", function() {
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length > 0, "No paintings returned for Van Gogh");
+
+
+        const vanGoghTitles = response.body.paintings.map(painting => painting.title);
+
+
+        const expectedTitles = ["Irises", "Landscape with Wheelbarrow"];
+
+
+        expectedTitles.forEach(title => {
+            client.assert(
+                vanGoghTitles.includes(title),
+                `Painting titled "${title}" is missing for Van Gogh`
+            );
+        });
+
+
+        response.body.paintings.forEach(painting => {
+            client.assert(
+                painting.artistID === 1,
+                `Painting with ID ${painting.paintingID} does not belong to Van Gogh`
+            );
+        });
+    });
+%}
+
+### TC3: (Good weather) Tests if correct painting filtered by existing style is returned
+
+GET {{host}}:{{port}}/paintings?style=Figurative%20Expressionism
+
+> {%
+    client.test("Paintings retrieval for style 'Figurative Expressionism' is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length > 0, "No paintings returned for the style 'Figurative Expressionism'");
+
+
+        const titles = response.body.paintings.map(painting => painting.title);
+
+
+        const expectedTitles = ["Head of Study, Brunette"];
+
+
+        expectedTitles.forEach(title => {
+            client.assert(
+                titles.includes(title),
+                `Painting titled "${title}" is missing for style 'Figurative Expressionism'`
+            );
+        });
+
+
+        response.body.paintings.forEach(painting => {
+            client.assert(
+                painting.style === "Figurative Expressionism",
+                `Painting with ID ${painting.paintingID} does not have the style 'Figurative Expressionism'`
+            );
+        });
+    });
+%}
+
+### TC4: (Good weather) Tests if correct painting filtered by existing material is returned
+
+GET {{host}}:{{port}}/paintings?material=Watercolor
+
+> {%
+    client.test("Paintings retrieval for material 'Watercolor' is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length > 0, "No paintings returned for material 'Watercolor'");
+
+
+
+
+        response.body.paintings.forEach(painting => {
+            client.assert(
+                painting.material === "Watercolor",
+                `Painting with ID ${painting.paintingID} does not have the material 'Watercolor'`
+            );
+        });
+
+
+    });
+%}
+
+
+### TC5: (Good weather) Tests if correct painting searched by existing title is returned
+
+GET {{host}}:{{port}}/paintings?title=Irises
+
+> {%
+    client.test("Paintings retrieval for title 'Irises' is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length > 0, "No paintings returned for title 'Irises'");
+
+
+        const painting = response.body.paintings[0];
+        client.assert(
+            painting.title === "Irises",
+            `Returned painting title does not match 'Irises'. Found: ${painting.title}`
+        );
+
+
+        client.assert(
+            painting.artistID === 1,
+            `Artist ID for painting 'Irises' does not match expected value. Found: ${painting.artistID}`
+        );
+
+        client.assert(
+            painting.style === "Post-Impressionism",
+            `Style for painting 'Irises' does not match expected value. Found: ${painting.style}`
+        );
+
+
+    });
+%}
+
+### TC6: (Good weather) Tests if correct painting returned with existing combined filters
+
+GET {{host}}:{{port}}/paintings?style=Post-Impressionism&artist=Van%20Gogh&material=Oil%20paint
+
+
+> {%
+    client.test("Paintings retrieval with combined filters is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length > 0, "No paintings returned with the specified filters");
+
+
+        const painting = response.body.paintings.find(painting => painting.title === "Irises");
+
+        client.assert(
+            painting !== undefined,
+            "Painting 'Irises' is not returned with the specified filters"
+        );
+
+
+        client.assert(
+            painting.style === "Post-Impressionism",
+            `Style of 'Irises' does not match. Found: ${painting.style}`
+        );
+
+        client.assert(
+            painting.artistID === 1,
+            `Artist ID of 'Irises' does not match. Found: ${painting.artistID}`
+        );
+
+        client.assert(
+            painting.material === "Oil paint",
+            `Material of 'Irises' does not match. Found: ${painting.material}`
+        );
+
+
+    });
+%}
+
+
+### TC7: (Bad weather) Tests if searching for a non-existent title returns an empty array
+GET {{host}}:{{port}}/paintings?title=NonExistentTitle
+
+> {%
+    client.test("Search for non-existent title returns an empty array", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length === 0, "Non-existent title did not return an empty array");
+    });
+%}
+
+### TC8: (Bad weather) Tests if filtering for a painting that does not have a combination of two filters (material and author) returns an empty array
+
+GET {{host}}:{{port}}/paintings?artist=Pablo%20Picasso&material=Watercolor
+
+> {%
+    client.test("Filtering by non-existent combination of material and author returns an empty array", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(response.body.paintings.length === 0, "Non-existent combination of material and author did not return an empty array");
+    });
+%}
+
+### TC9: (Good weather) Tests if retrieving a painting by a valid ID returns the correct painting
+
+GET {{host}}:{{port}}/paintings/1
+
+> {%
+    client.test("Retrieving painting by valid ID is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        const painting = response.body;
+
+        client.assert(
+            painting.paintingID === 1,
+            `Painting ID does not match expected value. Found: ${painting.paintingID}`
+        );
+
+        client.assert(
+            painting.title === "Irises",
+            `Painting title does not match expected value. Found: ${painting.title}`
+        );
+
+        client.assert(
+            painting.artistID === 1,
+            `Artist ID does not match expected value. Found: ${painting.artistID}`
+        );
+
+        client.assert(
+            painting.yearOfCreation === 1889,
+            `Year of Creation does not match expected value. Found: ${painting.yearOfCreation}`
+        );
+
+        client.assert(
+            painting.style === "Post-Impressionism",
+            `Painting style does not match expected value. Found: ${painting.style}`
+        );
+
+        client.assert(
+            painting.material === "Oil paint",
+            `Painting material does not match expected value. Found: ${painting.material}`
+        );
+
+        client.assert(
+            painting.size === "71 cm x 93 cm",
+            `Painting size does not match expected value. Found: ${painting.size}`
+        );
+
+        client.assert(
+            painting.startPrice === 3000,
+            `Start price does not match expected value. Found: ${painting.startPrice}`
+        );
+
+    });
+%}
+
+### TC10: (Bad weather) Tests if retrieving a painting by a non-existent ID
+
+GET {{host}}:{{port}}/paintings/9999
+
+> {%
+    client.test("Retrieving painting by non-existent ID returns a 404 error", function() {
+
+
+        client.assert(response.status === 404, "Response status is not 404");
+
+
+        client.assert(
+            response.body.message === "Painting not found",
+            `Error message does not match expected value. Found: ${response.body.message}`
+        );
+
+    });
+%}
+
+### TC11: (Good weather)  Tests retrieving bids for a valid painting ID
+
+GET {{host}}:{{port}}/paintings/1/bids
+
+> {%
+    client.test("Retrieving bids for a valid painting ID is successful", function() {
+
+
+        client.assert(response.status === 200, "Response status is not 200");
+
+
+        client.assert(
+            response.body.bids.length > 0,
+            "No bids found for the given painting ID"
+        );
+
+
+        response.body.bids.forEach(bid => {
+            client.assert(
+                bid.paintingID === 1,
+                `Bid with ID ${bid.bidID} does not belong to painting ID 1`
+            );
+        });
+    });
+%}
+
+
+### TC12: (Bad weather)  Tests retrieving bids for an invalid painting ID
+
+GET {{host}}:{{port}}/paintings/999/bids
+
+> {%
+    client.test("Retrieving bids for a non-existent painting ID returns an error", function() {
+
+        // Check if the response status is 404
+        client.assert(response.status === 404, "Response status is not 404");
+
+        // Validate the error message
+        client.assert(
+            response.body.error === "Painting not found",
+            `Error message does not match expected value. Found: ${response.body.error}`
+        );
+    });
+%}
+
+### TC19: (Good weather)  Tests adding valid painting
+POST {{host}}:{{port}}/paintings
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Starry Night",
+  "artistID": 1,
+  "yearOfCreation": 1889,
+  "style": "Post-Impressionism",
+  "material": "Oil paint",
+  "size": "73 cm x 92 cm",
+  "startPrice": 10000,
+  "startDate": "2024-12-15",
+  "endDate": "2025-01-15"
+}
+> {%
+    client.test("Painting creation successful", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        client.global.set("paintingID", response.body.painting.paintingID); // Store created painting ID
+    });
+%}
+
+### TC20: (Good weather)  Tests updating existing painting
+
+PUT {{host}}:{{port}}/paintings/{{paintingID}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Starry Night Over the Rhône"
+}
+> {%
+    client.test("Painting update successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.painting.title === "Starry Night Over the Rhône", "Painting title not updated");
+    });
+%}
+
+### TC21: (Bad weather)   Tests updating an existing painting with an invalid date range
+
+PUT {{host}}:{{port}}/paintings/{{paintingID}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "startDate": "2025-01-01",
+  "endDate": "2024-12-31"
+}
+> {%
+    client.test("Painting update with invalid date range fails", function() {
+        client.assert(response.status === 400, "Response status is not 400"); // Expecting 400 status for bad request
+        client.assert(response.body.message === "End date must be after start date", "Error message mismatch"); // Check for proper error message
+    });
+%}
+### TC22: (Bad weather)   Tests updating an existing painting with an invalid start price
+PUT {{host}}:{{port}}/paintings/{{paintingID}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "startPrice": -100
+}
+> {%
+    client.test("Painting update with invalid start price fails", function() {
+        client.assert(response.status === 400, "Response status is not 400"); // Expecting 400 status for bad request
+        client.assert(response.body.message === "Start price must be greater than zero", "Error message mismatch"); // Check for proper error message
+    });
+%}
+
+
+
+
+### TC23: (Good weather)  Tests deleting existing painting
+
+DELETE {{host}}:{{port}}/paintings/{{paintingID}}
+Authorization: Bearer {{adminToken}}
+
+> {%
+    client.test("Painting deletion successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.message === "Painting deleted successfully", "Deletion message mismatch");
+    });
+%}
+
+### TC25: (Bad weather)  Tests creating painting without a token
+POST {{host}}:{{port}}/paintings
+Content-Type: application/json
+
+{
+  "title": "Sunflowers",
+  "artistID": 1,
+  "yearOfCreation": 1888,
+  "style": "Post-Impressionism",
+  "material": "Oil paint",
+  "size": "92 cm x 73 cm",
+  "startPrice": 8000,
+  "startDate": "2024-12-20",
+  "endDate": "2025-01-20"
+}
+> {%
+    client.test("Painting creation without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+### TC26: (Bad weather) Tests creating painting with regular user token
+POST {{host}}:{{port}}/paintings
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "title": "Starry Night",
+  "artistID": 1,
+  "yearOfCreation": 1889,
+  "style": "Post-Impressionism",
+  "material": "Oil paint",
+  "size": "74 cm x 92 cm",
+  "startPrice": 10000,
+  "startDate": "2024-12-25",
+  "endDate": "2025-01-25"
+}
+> {%
+    client.test("Painting creation with regular user token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+
+
+
+
+
+
+
+### TC27: (Bad weather) Tests updating painting without a token
+
+PUT {{host}}:{{port}}/paintings/{{paintingID}}
+Content-Type: application/json
+
+{
+  "title": "Café Terrace at Night"
+}
+> {%
+    client.test("Painting update without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+### TC28: (Bad weather) Tests updating painting with a regular user token
+
+PUT {{host}}:{{port}}/paintings/{{paintingID}}
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+{
+  "title": "Café Terrace at Night"
+}
+> {%
+    client.test("Painting update with regular user token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+    });
+%}
+
+### TC29: (Bad weather) Tests updating non-existent painting
+PUT {{host}}:{{port}}/paintings/9999
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Non-Existent Painting"
+}
+> {%
+    client.test("Painting update for non-existent ID fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "Painting not found", "Error message mismatch");
+    });
+%}
+
+### TC30: (Bad weather) Tests delete painting without a token
+
+DELETE {{host}}:{{port}}/paintings/{{paintingID}}
+
+
+> {%
+    client.test("Painting deletion without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+
+### TC31: (Bad weather) Tests delete painting with a regular user token
+
+DELETE {{host}}:{{port}}/paintings/{{paintingID}}
+Content-Type: application/json
+Authorization: Bearer {{userToken}}
+
+> {%
+    client.test("Painting delete with regular user token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+
+    });
+%}
+
+### TC32: (Bad weather) Tests delete a non-existent painting
+DELETE {{host}}:{{port}}/paintings/9999
+Authorization: Bearer {{adminToken}}
+
+> {%
+    client.test("Painting deletion for non-existent ID fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "Painting not found", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

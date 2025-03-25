@@ -1,0 +1,122 @@
+### TC54: (Good weather) Tests creating of valid bid
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 4,
+  "amount": 2000,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Valid bid creation successful", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.body.bid.amount === 2000, "Bid amount does not match");
+        client.assert(response.body.bid.paintingID === 4, "Painting ID does not match");
+    });
+%}
+
+### TC55: (Bad weather) Tests creating bid with missing data
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 4
+}
+> {%
+    client.test("Bid creation with missing data fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.error === "Painting ID, bid amount, and date are required", "Error message mismatch");
+    });
+%}
+
+### TC56: (Bad weather) Tests creating bid for auction that didn't started
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 7,
+  "amount": 1200,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Bid creation for auction that didn't start fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.error === "Auction has not started yet", "Error message mismatch");
+    });
+%}
+
+### TC57: (Bad weather) Tests creating bid for auction that ended
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 3,
+  "amount": 9000,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Bid creation for auction that ended fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.error === "Auction has ended", "Error message mismatch");
+    });
+%}
+
+### TC58: (Bad weather) Tests creating bid with amount that less than the start price
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 6,
+  "amount": 6000,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Bid creation with amount less than the start price fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.error === "Bid amount must be higher than the start price", "Error message mismatch");
+    });
+%}
+
+### TC59: (Bad weather) Tests creating bid with amount that less than the current bid
+POST {{host}}:{{port}}/bids
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "paintingID": 4,
+  "amount": 1502,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Bid creation with amount less than the current bid fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.error === "Bid amount must be higher than the current bid", "Error message mismatch");
+    });
+%}
+
+### TC60: (Bad weather) Tests creating bid with absent token
+POST {{host}}:{{port}}/bids
+Content-Type: application/json
+
+{
+  "paintingID": 4,
+  "amount": 2000,
+  "date": "2024-12-11"
+}
+> {%
+    client.test("Bid creation without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+

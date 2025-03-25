@@ -1,0 +1,58 @@
+[
+  {
+    "bidID": 1,
+    "userID": 2,
+    "paintingID": 3,
+    "amount": 5000,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 2,
+    "userID": 2,
+    "paintingID": 3,
+    "amount": 6000,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 3,
+    "userID": 2,
+    "paintingID": 3,
+    "amount": 7000,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 4,
+    "userID": 2,
+    "paintingID": 3,
+    "amount": 8000,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 5,
+    "userID": 2,
+    "paintingID": 2,
+    "amount": 6000,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 6,
+    "userID": 2,
+    "paintingID": 2,
+    "amount": 6500,
+    "bidDate": "2024-12-09"
+  },
+  {
+    "bidID": 7,
+    "userID": 2,
+    "paintingID": 2,
+    "amount": 7000,
+    "bidDate": "2024-12-10"
+  },
+  {
+    "bidID": 8,
+    "userID": 1,
+    "paintingID": 1,
+    "amount": 40000,
+    "bidDate": "2024-12-10"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "userID": 1,
+    "email": "yevheniia@gmail.com",
+    "password": "$2b$10$g1nBAmDFTU8Hbrfc3W..1.VBzrGGCsqBKslG6wPHXEKBO8iq2uXp2",
+    "isAdmin": true
+  },
+  {
+    "userID": 2,
+    "email": "user@gmail.com",
+    "password": "$2b$10$gHzKEcrvA.y/.2FPce64ceCXr.2VhI2zis2AOVUZYhppB.D97Tvk6",
+    "isAdmin": false
+  }
+]

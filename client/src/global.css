@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+body {
+    font-family: "Roboto", Arial, sans-serif;
+
+    font-size: 16px;
+    color: #000;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+p {
+    font-family: "Roboto", Arial, sans-serif;
+    font-size: 20px;
+}
+.btn {
+    --bg: #e0e0e0;
+    --text-color: #000000;
+    --w: 50px;
+    --h: 30px;
+    --fz: 16px;
+    --bdrs: 5px;
+    --hover-bg: #888;
+    --hover-text-color: #000000;
+
+    font-size: var(--fz);
+    min-width: var(--w);
+    min-height: var(--h);
+
+    color: var(--text-color);
+    background-color: var(--bg);
+    padding: 0 10px;
+    border-radius: var(--bdrs);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--hover-bg);
+    color: var(--hover-text-color);
+}
+.btn-sm {
+    --w: 40px;
+    --h: 26px;
+    --fz: 14px;
+}
+
+.btn-lg {
+    --w: 70px;
+    --h: 40px;
+    --fz: 18px;
+}
+
+.btn-icon {
+    --w: var(--h);
+}
+
+.btn-radius {
+    --bdrs: 100px;
+}
+.btn-submit{
+    width:80%;
+    margin-left: 30px
+}
+
+
+.btn-red {
+    --bg: red;
+    --hover-bg: rgb(235, 107, 107);
+}
+
+.btn-black {
+    --bg: rgb(0, 0, 0);
+    --text-color: #fff;
+    --hover-bg: rgb(87, 85, 85);
+    --hover-text-color: #fff;
+}
+
+.btn-blue {
+    --bg: blue;
+    --text-color: #fff;
+    --hover-text-color: rgb(2, 41, 120);
+    --hover-bg: rgb(72, 135, 255);
+}
+
+
+
+
+.btn-edit {
+    --bg: #0074a3;
+    --text-color: #fff;
+    --hover-bg: #04597a;
+    --hover-text-color: #fff;
+}
+
+.btn-del {
+    --bg: #990101;
+    --text-color: #fff;
+    --hover-bg: #c01d1d;
+    --hover-text-color: #fff;
+}
+
+
+.form-style {}
+
+.form-style.form-style-minimal {
+    align-items: center;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-style .input-hold {
+    margin-bottom: 30px;
+}
+
+.form-style .input-hold .input {}
+
+.form-style button[type="submit"] {
+    min-height: 52px;
+    border-radius: 50px;
+    width: 100%;
+
+}
+
+.mt-30px {
+    margin-top: 30px;
+}
+
+.mb-30px {
+    margin-bottom: 30px;
+}
+
+
+
+
+
+
+
+.input-hold {
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+}
+
+.input {
+    font-size: 16px;
+    color: #333333;
+    outline: none;
+    border: none;
+    border-radius: 28px;
+    background-color: #f6f6f6;
+    min-height: 52px;
+    padding: 0 20px;
+    width: 100%;
+    font-family: inherit;
+}
+@media (max-width: 480px) {
+    .form-style-minimal {
+        padding-left: 10px;
+        padding-right: 10px;
+        width:100%;
+    }
+    .btn-sm {
+        --w: auto; /* Let the button adjust width based on content */
+        font-size: 14px;
+        padding: 4px 12px; /* Adjust padding for readability */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "artistID": 1,
+    "firstname": "Vincent",
+    "lastname": "van Gogh",
+    "country": "Netherlands",
+    "style": "Post-Impressionism",
+    "description": "Vincent van Gogh was a Dutch Post-Impressionist painter whose work is notable for its emotional depth, bold color, and expressive brushwork. His most famous paintings, including 'Starry Night', 'The Bedroom', and 'Irises', reflect his passion for nature, life, and personal suffering. Despite battling mental illness and poverty, van Gogh produced over 2,000 artworks, many of which are considered masterpieces today. His innovative use of color and texture had a profound impact on 20th-century art movements.",
+    "imageURL": "/images/artists/Portrait-Vincent-van-Gogh.jpg"
+  },
+  {
+    "artistID": 2,
+    "firstname": "Rembrandt",
+    "lastname": "van Rijn",
+    "country": "Netherlands",
+    "style": "Baroque",
+    "description": "Rembrandt van Rijn was one of the most influential artists of the Dutch Golden Age, known for his masterful use of light and shadow and his deep, psychological portraits. His work, which includes 'The Night Watch', 'The Anatomy Lesson of Dr. Nicolaes Tulp', and many self-portraits, showcases an unparalleled ability to capture the complexities of human emotion. Rembrandt's paintings are revered for their dramatic realism, attention to detail, and use of chiaroscuro.",
+    "imageURL": "/images/artists/Portrait-Rembrandt.jpg"
+  },
+  {
+    "artistID": 3,
+    "firstname": "Pablo",
+    "lastname": "Picasso",
+    "country": "Spain",
+    "style": "Cubism",
+    "description": "Pablo Picasso was a Spanish painter, sculptor, and co-founder of Cubism, one of the most revolutionary art movements of the 20th century. Known for breaking traditional artistic boundaries, Picasso’s work evolved over decades, ranging from his early Blue and Rose periods to his Cubist experiments and later Surrealist works. His masterpiece, 'Guernica', is a powerful anti-war statement, and he is celebrated for reshaping the way we perceive form and perspective in art.",
+    "imageURL": "/images/artists/Portrait-Pablo_Picasso.jpg"
+  },
+  {
+    "artistID": 4,
+    "firstname": "Anatoly",
+    "lastname": "Kryvolap",
+    "country": "Ukraine",
+    "style": "Contemporary",
+    "description": "Anatoly Kryvolap is one of Ukraine's most renowned contemporary artists, known for his vibrant use of color and his evocative landscapes. His abstract style blends Ukrainian folk art traditions with modern techniques, focusing on the emotional power of color and light. Kryvolap’s work, which often depicts the Ukrainian countryside, has gained international recognition, and he is celebrated for capturing the spiritual essence of Ukraine’s natural beauty.",
+    "imageURL": "/images/artists/Portrait-Kryvolap.jpg"
+  },
+  {
+    "artistID": 5,
+    "firstname": "Frida",
+    "lastname": "Kahlo",
+    "country": "Mexico",
+    "style": "Surrealism",
+    "description": "Frida Kahlo was a Mexican painter known for her deeply personal and symbolic self-portraits. Influenced by Mexican culture, folk art, and her tumultuous life, her paintings explore themes of identity, post-colonialism, gender, class, and race. After surviving a devastating accident, Kahlo channeled her physical and emotional pain into her art. Her bold use of color and symbolic imagery made her a feminist icon and one of the most celebrated Surrealist artists of the 20th century.",
+    "imageURL": "/images/artists/Portrait-Frida-Kahlo.jpg"
+  },
+  {
+    "artistID": 6,
+    "firstname": "Salvador",
+    "lastname": "Dalí",
+    "country": "Spain",
+    "style": "Surrealism",
+    "description": "Salvador Dalí was a Spanish surrealist known for his bizarre and dream-like imagery. His famous painting 'The Persistence of Memory', with its melting clocks, exemplifies his interest in the subconscious and time’s fluidity. Dalí’s work combined precise draftsmanship with eccentric and surreal subject matter, influenced by Freud’s theories on psychoanalysis and dream interpretation. Beyond painting, Dalí’s influence extended to sculpture, film, and even fashion, making him one of the most versatile artists of his time.",
+    "imageURL": "/images/artists/Portrait-Salvador_Dali.jpg"
+  },
+  {
+    "artistID": 7,
+    "firstname": "Malcolm",
+    "lastname": "Liepke",
+    "country": "United States",
+    "style": "Figurative Expressionism",
+    "description": "Malcolm Liepke is an American contemporary painter known for his figurative and portrait works, which often focus on intimate, emotionally charged depictions of the human form. Influenced by masters such as John Singer Sargent and Edgar Degas, Liepke’s paintings emphasize sensuality and human connection, using thick, lush brushstrokes and rich color palettes. His work often features isolated moments of introspection, longing, and desire, making him a renowned figure in modern figurative painting.",
+    "imageURL": "/images/artists/Portrait-Malcolm-Liepke.jpg"
+  }
+]

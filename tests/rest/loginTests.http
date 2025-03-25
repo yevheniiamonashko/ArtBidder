@@ -1,0 +1,100 @@
+
+
+### TC13: (Good weather)  Test login for admin user
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "email": "yevheniia@gmail.com",
+  "password": "12345Abcd+"
+}
+> {%
+    client.test("Admin login successful, token received", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.global.set("adminToken", response.body.token);
+    });
+%}
+
+### TC14: (Good weather)  Test login for regular user
+
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "email": "user@gmail.com",
+  "password": "12345678"
+}
+> {%
+    client.test("User login successful, token received", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.global.set("userToken", response.body.token); // Store user token globally
+    });
+%}
+
+### TC15: (Bad weather)  Test login for admin user with wrong password
+
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "email": "yevheniia@gmail.com",
+  "password": "WrongPassword123"
+}
+> {%
+    client.test("Login with invalid password fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Invalid email or password.", "Error message does not match");
+    });
+%}
+
+### TC16: (Bad weather)  Test login for non-existent user
+
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "email": "nonexistentuser@gmail.com",
+  "password": "12345678"
+}
+> {%
+    client.test("Login for non-existent user fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Invalid email or password.", "Error message does not match");
+    });
+%}
+
+### TC17: (Bad weather)  Test login with not provided password
+
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "email": "yevheniia@gmail.com"
+}
+> {%
+    client.test("Login with missing password fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "Email and password are required.", "Error message does not match");
+    });
+%}
+
+
+### TC18: (Bad weather)  Test login with not provided email
+
+POST {{host}}:{{port}}/tokens
+Content-Type: application/json
+
+{
+  "password": "12345678"
+}
+> {%
+    client.test("Login with missing password fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "Email and password are required.", "Error message does not match");
+    });
+%}
+
+
+
+
+

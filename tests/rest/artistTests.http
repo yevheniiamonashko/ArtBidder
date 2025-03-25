@@ -1,0 +1,200 @@
+### TC33: (Good weather) Tests if list of artists is returned correclty
+GET {{host}}:{{port}}/artists
+
+> {%
+    client.test("Artists retrieval successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.length > 0, "Artists list is empty");
+    });
+%}
+
+
+### TC34: (Good weather) Tests adding a valid artist
+POST {{host}}:{{port}}/artists
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "firstname": "Claude",
+  "lastname": "Monet",
+  "country": "France",
+  "style": "Impressionism",
+  "description": "Claude Monet was a French painter, founder of Impressionism, and a master of capturing the subtle nuances of light and atmosphere in his works."
+}
+> {%
+    client.test("Artist creation successful", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.body.artist.firstname === "Claude", "Artist firstname does not match");
+        client.assert(response.body.artist.lastname === "Monet", "Artist lastname does not match");
+        client.global.set("artistID", response.body.artist.artistID);
+    });
+%}
+### TC35: (Good weather) Tests retreiving artist by valid id
+GET {{host}}:{{port}}/artists/{{artistID}}
+
+> {%
+    client.test("Artist retrieval by valid ID successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.firstname === "Claude", "Artist firstname does not match");
+        client.assert(response.body.lastname === "Monet", "Artist lastname does not match");
+    });
+%}
+
+
+
+### TC36: (Good weather) Tests updating  a valid artist
+PUT {{host}}:{{port}}/artists/{{artistID}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "style": "Impressionism",
+  "description": "Updated description for Claude Monet."
+}
+> {%
+    client.test("Artist update successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.artist.style === "Impressionism", "Artist style was not updated correctly");
+        client.assert(response.body.artist.description.includes("Updated"), "Artist description was not updated correctly");
+    });
+%}
+
+### TC37: (Good weather) Tests deleting a valid artist
+DELETE {{host}}:{{port}}/artists/{{artistID}}
+Authorization: Bearer {{adminToken}}
+
+> {%
+    client.test("Artist deletion successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.message === "Artist deleted successfully", "Deletion message mismatch");
+    });
+%}
+
+
+
+### TC38: (Bad weather) Tests retreiving artist by invalid id
+GET {{host}}:{{port}}/artists/9999
+
+> {%
+    client.test("Artist retrieval by invalid ID fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "Artist not found", "Error message mismatch");
+    });
+%}
+
+### TC39: (Bad weather) Tests adding a invalid artist
+POST {{host}}:{{port}}/artists
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "firstname": "Claude"
+}
+> {%
+    client.test("Artist creation with missing fields fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "All fields are required", "Error message mismatch");
+    });
+%}
+
+### TC40: (Bad weather) Tests deleting non-existent artist
+DELETE {{host}}:{{port}}/artists/9999
+Authorization: Bearer {{adminToken}}
+
+> {%
+    client.test("Artist deletion for non-existent ID fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "Artist not found", "Error message mismatch");
+    });
+%}
+
+### TC41: (Bad weather) Tests adding artist with missing token
+POST {{host}}:{{port}}/artists
+Content-Type: application/json
+
+{
+  "firstname": "Claude",
+  "lastname": "Monet",
+  "country": "France",
+  "style": "Impressionism",
+  "description": "Claude Monet was a French painter, founder of Impressionism, and a master of capturing the subtle nuances of light and atmosphere in his works."
+}
+> {%
+    client.test("Artist creation without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+### TC42: (Bad weather) Tests adding artist with non-admin token
+POST {{host}}:{{port}}/artists
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "firstname": "Claude",
+  "lastname": "Monet",
+  "country": "France",
+  "style": "Impressionism",
+  "description": "Claude Monet was a French painter, founder of Impressionism, and a master of capturing the subtle nuances of light and atmosphere in his works."
+}
+> {%
+    client.test("Artist creation with non-admin token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+    });
+%}
+
+### TC50: (Bad weather) Tests updating artist with missing token
+PUT {{host}}:{{port}}/artists/{{artistID}}
+Content-Type: application/json
+
+{
+  "style": "Updated Impressionism"
+}
+> {%
+    client.test("Artist update without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+### TC51: (Bad weather) Tests updating artist with non-admin token
+PUT {{host}}:{{port}}/artists/{{artistID}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "style": "Updated Impressionism"
+}
+> {%
+    client.test("Artist update with non-admin token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+    });
+%}
+
+### TC52: (Bad weather) Tests deleting artist with missing token
+DELETE {{host}}:{{port}}/artists/{{artistID}}
+
+> {%
+    client.test("Artist deletion without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+### TC53: (Bad weather) Tests deleting artist with non-admin token
+DELETE {{host}}:{{port}}/artists/{{artistID}}
+Authorization: Bearer {{userToken}}
+
+> {%
+    client.test("Artist deletion with non-admin token fails", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+        client.assert(response.body.message === "Admin privileges are required", "Error message mismatch");
+    });
+%}
+
+
+
+

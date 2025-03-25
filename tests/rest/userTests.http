@@ -1,0 +1,197 @@
+### TC61: (Good weather) Tests creating a valid user
+POST {{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "email": "testuser@gmail.com",
+  "password": "Password123"
+}
+> {%
+    client.test("User creation successful", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        client.global.set("testUserToken", response.body.token); // Store user token globally
+        client.global.set("testUserID", response.body.user.userID); // Store user ID globally for subsequent tests
+    });
+%}
+
+
+### TC62: (Good weather) Test updating existent user
+PUT {{host}}:{{port}}/users/{{testUserID}}/email
+Authorization: Bearer {{testUserToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "updateduser@gmail.com"
+}
+> {%
+    client.test("User update successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.user.email === "updateduser@gmail.com", "User email was not updated");
+    });
+%}
+
+
+### TC63: (Good weather) Tests retreiving bids history for valid user
+GET {{host}}:{{port}}/users/{{testUserID}}/winBids
+Authorization: Bearer {{testUserToken}}
+
+> {%
+    client.test("User bid history retrieval successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(Array.isArray(response.body.bids), "Bids are not returned as an array");
+    });
+%}
+
+### TC64: (Bad weather) Tests updating user with invalid email
+PUT {{host}}:{{port}}/users/{{testUserID}}/email
+Authorization: Bearer {{testUserToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "invalidemail"
+}
+> {%
+    client.test("Updating user with invalid email fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "Invalid new email address!", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+
+
+### TC65: (Bad weather) Tests creating user with missing data
+POST {{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "email": "incompleteuser@gmail.com"
+}
+> {%
+    client.test("User creation with missing data fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "All fields are required", "Error message mismatch");
+    });
+%}
+
+### TC66: (Bad weather) Tests creating user with invalid email
+POST {{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "email": "invalidemail",
+  "password": "Password123"
+}
+> {%
+    client.test("User creation with invalid email fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "Invalid email address!", "Error message mismatch");
+    });
+%}
+
+### TC67: (Bad weather) Tests creating user with password less than 8 characters
+POST {{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "email": "shortpassword@gmail.com",
+  "password": "12345"
+}
+> {%
+    client.test("User creation with short password fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "Password must have at least 8 characters", "Error message mismatch");
+    });
+%}
+
+### TC68: (Bad weather) Tests creating duplicate user
+POST {{host}}:{{port}}/users
+Content-Type: application/json
+
+{
+  "email": "user@gmail.com",
+  "password": "Password123"
+}
+> {%
+    client.test("Duplicate user creation fails", function() {
+        client.assert(response.status === 400, "Response status is not 400");
+        client.assert(response.body.message === "User already exists", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+### TC69: (Bad weather) Tests updating user which does not exist
+PUT {{host}}:{{port}}/users/9999/email
+Authorization: Bearer {{testUserToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "nonexistentuser@gmail.com"
+}
+> {%
+    client.test("Updating non-existent user fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "User not found", "Error message mismatch");
+    });
+%}
+
+### TC70: (Bad weather) Tests deleting user which does not exist
+DELETE {{host}}:{{port}}/users/9999
+Authorization: Bearer {{testUserToken}}
+
+> {%
+    client.test("Deleting non-existent user fails", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+        client.assert(response.body.message === "User not found", "Error message mismatch");
+    });
+%}
+
+### TC71: (Bad weather) Tests editing user without a user token
+PUT {{host}}:{{port}}/users/{{testUserID}}/email
+Content-Type: application/json
+
+{
+  "newEmail": "unauthorizededit@gmail.com"
+}
+> {%
+    client.test("Editing user without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+
+
+### TC72: (Bad weather) Tests deleting user without a token
+
+DELETE {{host}}:{{port}}/users/{{testUserID}}
+Authorization: Bearer {{testUserToken}}
+
+> {%
+    client.test("User deletion successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.message === "User deleted successfully", "Deletion message mismatch");
+    });
+%}
+
+### TC73: (Good weather) Tests deleting user
+DELETE {{host}}:{{port}}/users/{{testUserID}}
+
+> {%
+    client.test("Deleting user without token fails", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+        client.assert(response.body.message === "Authorization token is missing", "Error message mismatch");
+    });
+%}
+
+
+
+
+
+
